@@ -27,18 +27,20 @@ def nasob(n):
     return t
 
 ######## KRB ######
-def krb(A,B):
+
+
+def krb(A, B):
     # Funkce Khatri-Rao produkt dvou matic A,B
     # INPUT:
     #           A ... vstupní matice n x r
     #           B ... vstupní matice m x r
     # OUTPUT:
     #           matice n*m x r
-    rowsA = len(A) # Počet řádků
+    rowsA = len(A)  # Počet řádků
     rowsB = len(B)
-    columnsA = len(A[0]) # Počet sloupců
+    columnsA = len(A[0])  # Počet sloupců
     columnsB = len(B[0])
-    if columnsA != columnsB: # Případ špatně zadaných argumentů
+    if columnsA != columnsB:  # Případ špatně zadaných argumentů
         raise Exception("Error - matice musi mit shodny pocet sloupcu")
     nasobek = rowsA * rowsB
     ab = np.zeros([nasobek, columnsA])
@@ -61,6 +63,7 @@ def JakobA(A, B, C):
     Ja = np.kron(krb(C, B), np.identity(Ia1))
     return Ja
 
+
 def JakobB(A, B, C):
     # Funkce pro výpočet jakobiánu účelové funkce podle faktorové matice B
     # INPUT:
@@ -75,8 +78,10 @@ def JakobB(A, B, C):
     for i in range(1, Ib2+1):
         a = (i-1) * Ib1
         b = i * Ib1
-        Jb[:, a:b] = (np.kron(C[:, (i-1)], (np.kron(np.identity(Ib1), A[:, (i-1)])))).transpose()
+        Jb[:, a:b] = (
+            np.kron(C[:, (i-1)], (np.kron(np.identity(Ib1), A[:, (i-1)])))).transpose()
     return Jb
+
 
 def JakobC(A, B, C):
     # Funkce pro výpočet jakobiánu účelové funkce podle faktorové matice C
@@ -92,8 +97,10 @@ def JakobC(A, B, C):
     for i in range(1, Ic2+1):
         a = (i-1) * Ic1
         b = i * Ic1
-        Jc[:, a:b] = (np.kron(np.identity(Ic1), np.kron(B[:, (i-1)], A[:, (i-1)]))).transpose()
+        Jc[:, a:b] = (np.kron(np.identity(Ic1), np.kron(
+            B[:, (i-1)], A[:, (i-1)]))).transpose()
     return Jc
+
 
 def ALS(X, rank, numit):
     # Alternating Least Squares algoritmus pro hledání CPD rozkladu tenzoru třetího řádu
@@ -103,11 +110,11 @@ def ALS(X, rank, numit):
     #           mnumit ... počet iterací algoritmu
     # OUTPUT:
     #           [A, B, C, error] ... faktorové matice [[A,B,C]], chyba aproximace
-    Ia = len(X[:, 1, 1]) # Rozměry zadaného tenzoru
+    Ia = len(X[:, 1, 1])  # Rozměry zadaného tenzoru
     Ib = len(X[1, :, 1])
     Ic = len(X[1, 1, :])
-    X = np.reshape(X, (Ia, Ib * Ic), order='F') # Matrizace zadaného tenzoru
-    A = np.random.rand(Ia, rank) # Inicializace náhodnými čísly
+    X = np.reshape(X, (Ia, Ib * Ic), order='F')  # Matrizace zadaného tenzoru
+    A = np.random.rand(Ia, rank)  # Inicializace náhodnými čísly
     B = np.random.rand(Ib, rank)
     C = np.random.rand(Ic, rank)
     error = np.zeros(numit-1)
@@ -132,6 +139,7 @@ def ALS(X, rank, numit):
         print(error[it-1])
     return [A, B, C, error]
 
+
 def chyba(X, A, B, C):
     # Funkce pro výpočet chyby aproximace, jako frobeniova norma rozdílu
     # INPUT:
@@ -142,8 +150,10 @@ def chyba(X, A, B, C):
     Y = X - (np.matmul(A, (krb(C, B)).transpose()))
     err = np.linalg.norm(Y, 'fro')
     return err
+
+
 if __name__ == "__main__":
-# Příklad s tenzorem 3.řádu reprezentující násobení matic dvou matic 3x3
+    # Příklad s tenzorem 3.řádu reprezentující násobení matic dvou matic 3x3
     X = nasob(3)
     Hodnost = 25
     numit = 50
@@ -158,5 +168,3 @@ if __name__ == "__main__":
     print(Vysledek[3])
 else:
     print("ALS bylo naimportovano")
-
-
